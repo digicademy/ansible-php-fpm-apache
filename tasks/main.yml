@@ -1,0 +1,27 @@
+---
+- name: Get installed version of apache2
+  shell: "/usr/sbin/apache2 -v"
+  changed_when: false
+  check_mode: no
+  register: apache2_daemon_out
+
+- name: Get installed PHP version
+  shell: "/usr/bin/php -v"
+  changed_when: false
+  check_mode: no
+  register: php_version_out
+
+- name: Create apache2_version variable
+  set_fact:
+    apache2_version: "{{ apache2_daemon_out.stdout.split()[2].split('/')[1] }}"
+    php_version_installed: "{{ php_version_out.stdout.split()[1].split('.')[0] }}"
+
+- name: Create apache2_minor_version variable
+  set_fact:
+    apache2_minor_version: "{{ apache2_version.split('.')[1] }}"
+
+- include: configure-apache2.2.yml
+  when: "apache2_minor_version == '2'"
+
+- include: configure-apache2.4.yml
+  when: "apache2_minor_version == '4'"

@@ -1,0 +1,13 @@
+<IfModule mod_proxy_fcgi.c>
+{% if php_version_installed == "5" %}
+    <Proxy "unix:/var/run/php5-fpm.sock|fcgi://php-fpm">
+{% endif %}
+{% if php_version_installed == "7" %}
+    <Proxy "unix:/var/run/php7.0-fpm.sock|fcgi://php-fpm">
+{% endif %}
+        ProxySet disablereuse=off
+    </Proxy>
+    <FilesMatch ".+\.php$">
+        SetHandler proxy:fcgi://php-fpm
+    </FilesMatch>
+</IfModule>

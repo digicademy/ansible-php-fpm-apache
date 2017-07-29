@@ -1,0 +1,17 @@
+---
+# Debian Jessie with Apache 2.4 and PHP 5.6 or 7.0 FPM
+
+- name: Enable apache2 proxy_fcgi module
+  apache2_module: state=present name={{ item }}
+  with_items:
+    - proxy_fcgi
+  notify: restart apache2
+
+- name: Put php-fpm.conf into /etc/apache2/conf-enabled/
+  template:
+    src: php-fpm.conf.j2
+    dest: "/etc/apache2/conf-enabled/php-fpm.conf"
+    owner: root
+    group: root
+    mode: u+rw,go+r
+  notify: restart apache2
